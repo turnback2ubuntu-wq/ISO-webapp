@@ -3,6 +3,7 @@ version: '3.8'
 services:
   # Frontend: React 18 + Vite (Nginx SPA with API Proxy)
   frontend:
+    image: iso21001-webapp-frontend:latest
     build:
       context: .
       dockerfile: docker/frontend/Dockerfile
@@ -17,6 +18,7 @@ services:
 
   # Backend: Laravel 11 API & Storage System
   backend:
+    image: iso21001-webapp-backend:latest
     build:
       context: .
       dockerfile: docker/backend/Dockerfile
