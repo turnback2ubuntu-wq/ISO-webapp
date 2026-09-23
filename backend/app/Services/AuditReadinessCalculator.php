@@ -154,6 +154,7 @@ class AuditReadinessCalculator
             case 'not_applicable':
                 $stat['not_applicable']++;
                 break;
+            case 'needs_revision':
             case 'rejected':
                 $stat['rejected']++;
                 break;

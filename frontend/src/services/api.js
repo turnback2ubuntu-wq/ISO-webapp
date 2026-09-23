@@ -4,14 +4,24 @@ const API_BASE = '/api/v1';
 
 export const api = {
   // Dashboard & Metrics
-  async getDashboard(dept = 'TIND') {
+  async getDashboard(dept = 'TIF') {
     const res = await fetch(`${API_BASE}/dashboard?department=${dept}`);
     if (!res.ok) throw new Error('Gagal mengambil data dashboard');
     return res.json();
   },
 
+  // Reset Demo Data
+  async resetDemo(dept = 'TIF') {
+    const res = await fetch(`${API_BASE}/system/reset-demo?department=${dept}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) throw new Error('Gagal mereset data demo ke standar awal');
+    return res.json();
+  },
+
   // 30 Items Checklist
-  async getChecklist(dept = 'TIND') {
+  async getChecklist(dept = 'TIF') {
     const res = await fetch(`${API_BASE}/checklist?department=${dept}`);
     if (!res.ok) throw new Error('Gagal mengambil data checklist');
     return res.json();

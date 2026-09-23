@@ -49,4 +49,8 @@ Route::prefix('v1')->group(function () {
 
     // 8. Bulk Hierarchical ZIP Export
     Route::get('/export/zip', [ExportZipController::class, 'downloadZip']);
+
+    // 9. System Reset & Seeding Demo
+    Route::post('/system/reset-demo', [DashboardController::class, 'resetDemo']);
 });
+

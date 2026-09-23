@@ -25,7 +25,7 @@ import VerificationWorkspace from './components/verification/VerificationWorkspa
 import ExecutiveAuditReport from './components/report/ExecutiveAuditReport';
 
 function AppContent() {
-  const { activeTab, setActiveTab } = useDocument();
+  const { activeTab, setActiveTab, selectedDept, setSelectedDept } = useDocument();
   const { currentRole } = useAuth();
 
   // Modals
@@ -35,8 +35,6 @@ function AppContent() {
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [previewDocId, setPreviewDocId] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  const [selectedDept, setSelectedDept] = useState('TIF');
 
   const handleOpenUpload = (context = {}) => {
     setUploadContext(context);

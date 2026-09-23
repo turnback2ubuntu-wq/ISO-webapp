@@ -18,7 +18,10 @@ export default function Header() {
     setActiveTab,
     metrics,
     prodiInfo,
-    resetAllData
+    selectedDept,
+    setSelectedDept,
+    resetAllData,
+    loadingDashboard
   } = useDocument();
 
   return (
@@ -40,6 +43,28 @@ export default function Header() {
         </div>
 
         <div className="header-actions">
+          {/* Department Selector */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Prodi:</span>
+            <select
+              value={selectedDept}
+              onChange={(e) => setSelectedDept(e.target.value)}
+              style={{
+                background: 'rgba(30, 41, 59, 0.8)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                color: '#F8FAFC',
+                borderRadius: 'var(--radius-sm)',
+                padding: '0.35rem 0.65rem',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              <option value="TIF">Teknik Informatika (TIF)</option>
+              <option value="TIND">Teknik Industri (TIND)</option>
+            </select>
+          </div>
+
           {/* Readiness Score Quick Pill */}
           <div
             className="badge badge-approved"
@@ -59,10 +84,12 @@ export default function Header() {
           <button
             className="btn btn-secondary btn-sm"
             onClick={resetAllData}
-            title="Reset Mock Data ke Standar Awal S1 TI"
+            disabled={loadingDashboard}
+            title="Reset data kesiapan repositori ke standar awal di VPS"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
           >
-            <RotateCcw size={13} />
-            <span>Reset Demo</span>
+            <RotateCcw size={13} className={loadingDashboard ? 'spin' : ''} />
+            <span>{loadingDashboard ? 'Mereset...' : 'Reset Demo'}</span>
           </button>
 
           {/* Role Switcher */}
