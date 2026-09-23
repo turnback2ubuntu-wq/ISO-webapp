@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Frontend: React 18 + Vite (Nginx SPA with API Proxy)
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    container_name: iso21001_frontend
+    restart: always
+    ports:
+      - "8020:80"
+    networks:
+      - iso21001_network
+    depends_on:
+      - backend
+
+  # Backend: Laravel 11 API & Storage System
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    container_name: iso21001_backend
+    restart: always
+    ports:
+      - "8021:8000"
+    environment:
+      - APP_NAME=ISO21001_ProdiDoc
+      - APP_ENV=local
+      - APP_KEY=base64:7B5Lw7H+n678mKq3+Y7E2V5Z6O9A4D3F2E1B0C9A8=
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8021
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-iso21001_db}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - FILESYSTEM_DISK=public
+    volumes:
+      - iso21001_storage:/var/www/storage/app/public
+    networks:
+      - iso21001_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Database: PostgreSQL 15
+  db:
+    image: postgres:15-alpine
+    container_name: iso21001_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-iso21001_db}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "5434:5432"
+    volumes:
+      - iso21001_pg_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - iso21001_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-iso21001_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  iso21001_network:
+    driver: bridge
+
+volumes:
+  iso21001_pg_data:
+  iso21001_storage:
