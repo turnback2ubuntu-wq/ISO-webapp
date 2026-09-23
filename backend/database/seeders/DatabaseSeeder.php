@@ -54,16 +54,18 @@ class DatabaseSeeder extends Seeder
         // 3. Seed 30 Checklist Items from PDF
         $this->call(ChecklistPoin7Seeder::class);
 
-        // 4. Scaffold Folders
-        $period = AcademicPeriod::where('code', '20252')->first();
-        $dept = Department::where('code', 'TIND')->first();
+        // 4. Scaffold Folders for all departments
+        $period = AcademicPeriod::where('code', '20252')->first() ?: AcademicPeriod::first();
 
-        if ($period && $dept) {
+        if ($period) {
             $scaffolder = new FolderScaffoldService();
-            $scaffolder->scaffold($period, $dept);
-
-            // 5. Seed some initial sample documents
-            $this->seedSampleDocuments($period, $dept);
+            foreach (Department::all() as $dept) {
+                $scaffolder->scaffold($period, $dept);
+                if ($dept->code === 'TIND') {
+                    // 5. Seed some initial sample documents
+                    $this->seedSampleDocuments($period, $dept);
+                }
+            }
         }
     }
 
