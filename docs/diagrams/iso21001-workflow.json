@@ -1,0 +1,191 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "ISO 21001 Document Assurance and Audit Workflow",
+    "output": "iso21001-workflow.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "full-assurance-path",
+        "label": "Full Assurance Path",
+        "focus": ["upload_mk", "scaffold_ingest", "review_audit", "decision_gate", "approval_sah", "dashboard_kesiapan"],
+        "note": "Alur pengunggahan instrumen perangkat perkuliahan hingga validasi sah dan kesiapan audit."
+      },
+      {
+        "id": "ncr-feedback-loop",
+        "label": "NCR Remediation Loop",
+        "focus": ["decision_gate", "revisi_ncr", "scaffold_ingest"],
+        "note": "Mekanisme penerbitan temuan audit NCR dan pengunggahan dokumen perbaikan oleh dosen."
+      },
+      {
+        "id": "governance-gate",
+        "label": "Governance & Readiness",
+        "focus": ["review_audit", "approval_sah", "dashboard_kesiapan"],
+        "note": "Pemeriksaan kesesuaian klausul ISO 21001 dan kalkulasi skor kesiapan 5 pilar EOMS."
+      }
+    ]
+  },
+  "lanes": [
+    { "id": "dosen", "label": "Dosen / Pengampu MK" },
+    { "id": "sistem", "label": "Sistem Otomasi Repositori" },
+    { "id": "mutu", "label": "Auditor Internal & Kaprodi" }
+  ],
+  "phases": [
+    { "id": "persiapan", "label": "Persiapan & Unggah", "fromCol": 0, "toCol": 1 },
+    { "id": "verifikasi", "label": "Audit & Evaluasi", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "validasi", "label": "Validasi & Kesiapan", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "audit_group", "label": "Evaluasi Klausul ISO 21001", "lane": "mutu", "fromCol": 2, "toCol": 3, "variant": "emphasis" }
+  ],
+  "mainPath": ["upload_mk", "scaffold_ingest", "review_audit", "decision_gate", "approval_sah", "dashboard_kesiapan"],
+  "nodes": [
+    {
+      "id": "upload_mk",
+      "lane": "dosen",
+      "col": 0,
+      "type": "frontend",
+      "label": "Unggah Instrumen",
+      "sublabel": "9 berkas perkuliahan",
+      "width": 130
+    },
+    {
+      "id": "revisi_ncr",
+      "lane": "dosen",
+      "col": 3,
+      "type": "frontend",
+      "label": "Perbaikan Temuan",
+      "sublabel": "revisi berkas NCR",
+      "tag": "needs_revision",
+      "width": 130
+    },
+    {
+      "id": "scaffold_ingest",
+      "lane": "sistem",
+      "col": 1,
+      "type": "backend",
+      "label": "Otomasi Repositori",
+      "sublabel": "folder tree & validasi",
+      "tag": "Status: submitted",
+      "width": 130
+    },
+    {
+      "id": "review_audit",
+      "lane": "mutu",
+      "col": 2,
+      "type": "security",
+      "label": "Audit Kepatuhan",
+      "sublabel": "klausul 8.1.2 & 8.3",
+      "tag": "GPM / Auditor",
+      "width": 130
+    },
+    {
+      "id": "decision_gate",
+      "lane": "mutu",
+      "col": 3,
+      "type": "backend",
+      "label": "Evaluasi Kepatuhan",
+      "sublabel": "penentuan status mutu",
+      "width": 130
+    },
+    {
+      "id": "approval_sah",
+      "lane": "mutu",
+      "col": 4,
+      "type": "security",
+      "label": "Otorisasi Kaprodi",
+      "sublabel": "sahkan dokumen mutu",
+      "tag": "Status: verified",
+      "width": 130
+    },
+    {
+      "id": "dashboard_kesiapan",
+      "lane": "mutu",
+      "col": 5,
+      "type": "database",
+      "label": "Dashboard Kesiapan",
+      "sublabel": "skor 5 pilar & ekspor",
+      "tag": "Audit Ready",
+      "width": 130
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-upload-ingest",
+      "from": "upload_mk",
+      "to": "scaffold_ingest",
+      "label": "unggah berkas",
+      "variant": "emphasis"
+    },
+    {
+      "id": "edge-ingest-review",
+      "from": "scaffold_ingest",
+      "to": "review_audit",
+      "label": "antrean audit",
+      "variant": "default"
+    },
+    {
+      "id": "edge-review-decision",
+      "from": "review_audit",
+      "to": "decision_gate",
+      "variant": "default"
+    },
+    {
+      "id": "edge-decision-approval",
+      "from": "decision_gate",
+      "to": "approval_sah",
+      "label": "dokumen patuh",
+      "variant": "emphasis"
+    },
+    {
+      "id": "edge-approval-dashboard",
+      "from": "approval_sah",
+      "to": "dashboard_kesiapan",
+      "label": "agregasi skor",
+      "variant": "emphasis"
+    },
+    {
+      "id": "edge-decision-ncr",
+      "from": "decision_gate",
+      "to": "revisi_ncr",
+      "label": "terbit NCR",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "edge-ncr-resubmit",
+      "from": "revisi_ncr",
+      "to": "scaffold_ingest",
+      "label": "kirim perbaikan",
+      "variant": "dashed",
+      "role": "branch"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Pengunggahan & Scaffold",
+      "items": [
+        "Dosen mengunggah 9 instrumen perkuliahan (RPS, Silabus, Kontrak)",
+        "Sistem membentuk folder tree dan pengecualian praktikum (01h)"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Audit & Penanganan NCR",
+      "items": [
+        "Auditor internal mengevaluasi kepatuhan klausul ISO 21001",
+        "Temuan NCR diteruskan kembali ke dosen untuk revisi berkas"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Otorisasi & Dashboard",
+      "items": [
+        "Dokumen patuh diverifikasi dan disahkan secara formal oleh Kaprodi",
+        "Skor kesiapan audit diperbarui realtime pada Dashboard 5 Pilar"
+      ]
+    }
+  ]
+}

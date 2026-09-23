@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "ProdiDoc ISO 21001 EOMS System Architecture",
+    "output": "iso21001-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "client-tier",
+        "label": "Client and UI Layer",
+        "focus": ["client", "rbac", "nginx", "api"],
+        "note": "Akses pengguna melalui SPA React 18 dengan simulasi multi-peran RBAC ke gerbang API."
+      },
+      {
+        "id": "backend-core",
+        "label": "Core API and Processing",
+        "focus": ["nginx", "api", "db", "audit"],
+        "note": "Pemrosesan logika bisnis ISO 21001, scaffolding repositori, dan kalkulasi kesiapan audit."
+      },
+      {
+        "id": "storage-and-cloud",
+        "label": "Document Storage and Cloud",
+        "focus": ["api", "storage", "gdrive"],
+        "note": "Penyimpanan fisik dokumen bukti mutu serta integrasi tautan berkas Google Drive."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "client",
+      "type": "frontend",
+      "label": "Web Client SPA",
+      "sublabel": "React 18 + Vite",
+      "pos": [40, 160],
+      "size": [140, 60],
+      "brand": "react"
+    },
+    {
+      "id": "rbac",
+      "type": "security",
+      "label": "RBAC Engine",
+      "sublabel": "Multi-Peran (6 Roles)",
+      "pos": [40, 40],
+      "size": [140, 60],
+      "tag": "ISO 21001 Matrix"
+    },
+    {
+      "id": "nginx",
+      "type": "cloud",
+      "label": "Nginx Gateway",
+      "sublabel": "Reverse Proxy :8020",
+      "pos": [260, 160],
+      "size": [140, 60]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Laravel 11 API",
+      "sublabel": "PHP-FPM REST :8021",
+      "pos": [480, 160],
+      "size": [150, 60]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "PostgreSQL 15",
+      "sublabel": "EOMS Relational DB",
+      "pos": [720, 160],
+      "size": [150, 60],
+      "brand": "postgresql"
+    },
+    {
+      "id": "storage",
+      "type": "database",
+      "label": "Document Storage",
+      "sublabel": "Volume /documents",
+      "pos": [480, 280],
+      "size": [150, 60],
+      "tag": "PDF / Office Files"
+    },
+    {
+      "id": "gdrive",
+      "type": "external",
+      "label": "Google Drive",
+      "sublabel": "Cloud Evidence Links",
+      "pos": [480, 40],
+      "size": [150, 60],
+      "tag": "Cloud Docs"
+    },
+    {
+      "id": "audit",
+      "type": "backend",
+      "label": "Audit Engine",
+      "sublabel": "Klausul 8.1.2 Scorer",
+      "pos": [720, 280],
+      "size": [150, 60],
+      "tag": "5 EOMS Pillars"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "VPS Production Host: 157.15.124.206 (Ubuntu 24.04)",
+      "wraps": ["nginx", "api", "db", "storage", "audit"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Docker Network: iso21001_net",
+      "wraps": ["nginx", "api", "db"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "client-to-rbac",
+      "from": "client",
+      "to": "rbac",
+      "label": "Local State",
+      "variant": "security"
+    },
+    {
+      "id": "client-to-nginx",
+      "from": "client",
+      "to": "nginx",
+      "label": "HTTP/REST",
+      "variant": "emphasis"
+    },
+    {
+      "id": "nginx-to-api",
+      "from": "nginx",
+      "to": "api",
+      "label": "Proxy Pass"
+    },
+    {
+      "id": "api-to-db",
+      "from": "api",
+      "to": "db",
+      "label": "SQL Queries"
+    },
+    {
+      "id": "api-to-storage",
+      "from": "api",
+      "to": "storage",
+      "label": "Disk Storage",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 20
+    },
+    {
+      "id": "api-to-gdrive",
+      "from": "api",
+      "to": "gdrive",
+      "label": "Evidence URL",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelDy": -20
+    },
+    {
+      "id": "api-to-audit",
+      "from": "api",
+      "to": "audit",
+      "label": "Score Eval"
+    },
+    {
+      "id": "audit-to-db",
+      "from": "audit",
+      "to": "db",
+      "label": "Aggregations",
+      "fromSide": "top",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Akses & Presentasi",
+      "items": [
+        "SPA React 18 + Vite dengan antarmuka penjaminan mutu EOMS",
+        "Simulasi Multi-Peran (RBAC dinamis 6 jabatan akademik)"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Layanan Backend & Logika Mutu",
+      "items": [
+        "RESTful API Laravel 11 mengelola modul kurikulum dan perangkat perkuliahan",
+        "Auto-scaffolding struktur pohon folder ISO 21001 (9 instrumen)"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Persistensi Data & Bukti Mutu",
+      "items": [
+        "PostgreSQL 15 menyimpan relasi berkas, versi dokumen, dan jejak audit",
+        "Volume terisolasi untuk berkas fisik serta dukungan tautan Google Drive"
+      ]
+    }
+  ]
+}

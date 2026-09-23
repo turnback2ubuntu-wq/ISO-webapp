@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "ISO 21001 Document Status Lifecycle",
+    "output": "iso21001-lifecycle.html",
+    "viewBox": [1030, 570],
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "standard-verification",
+        "label": "Standard Verification Path",
+        "focus": ["missing", "submitted", "reviewing", "decision", "verified"],
+        "note": "Alur pengesahan standar dari draf kosong, antrean verifikasi, hingga berkas sah."
+      },
+      {
+        "id": "ncr-revision-loop",
+        "label": "NCR Remediation Loop",
+        "focus": ["reviewing", "needs_revision", "submitted"],
+        "note": "Siklus perbaikan saat auditor menerbitkan catatan observasi atau ketidaksesuaian."
+      },
+      {
+        "id": "exemption-path",
+        "label": "Auto-Exemption Rule",
+        "focus": ["missing", "exempted"],
+        "note": "Pengecualian otomatis instrumen praktikum (01h) pada mata kuliah non-praktikum."
+      }
+    ]
+  },
+  "lanes": [
+    { "id": "main", "label": "Lifecycle Phases" },
+    { "id": "waiting", "label": "Evaluasi & Temuan" },
+    { "id": "exceptions", "label": "Revisi Perbaikan" },
+    { "id": "terminal", "label": "Pengecualian Khusus" }
+  ],
+  "states": [
+    {
+      "id": "missing",
+      "type": "start",
+      "label": "Belum Diunggah",
+      "sublabel": "berkas belum ada",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "tag": "missing"
+    },
+    {
+      "id": "submitted",
+      "type": "active",
+      "label": "Menunggu Review",
+      "sublabel": "berkas terunggah",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "tag": "submitted"
+    },
+    {
+      "id": "reviewing",
+      "type": "active",
+      "label": "Audit Kepatuhan",
+      "sublabel": "evaluasi klausul",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "tag": "audit"
+    },
+    {
+      "id": "decision",
+      "type": "decision",
+      "label": "Otorisasi Mutu",
+      "sublabel": "validasi pimpinan",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "tag": "decision"
+    },
+    {
+      "id": "verified",
+      "type": "success",
+      "label": "Dokumen Sah",
+      "sublabel": "approved penuh",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "tag": "verified"
+    },
+    {
+      "id": "needs_revision",
+      "type": "waiting",
+      "label": "Perbaikan NCR",
+      "sublabel": "tindak lanjut dosen",
+      "lane": "waiting",
+      "col": 0,
+      "tag": "revision"
+    },
+    {
+      "id": "exempted",
+      "type": "waiting",
+      "label": "Tidak Berlaku",
+      "sublabel": "bebas praktikum",
+      "lane": "waiting",
+      "col": 1,
+      "tag": "not_applicable"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "trans-audit-ncr",
+      "from": "reviewing",
+      "to": "needs_revision",
+      "label": "terbit NCR",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight",
+      "labelDy": 24
+    },
+    {
+      "id": "trans-ncr-resubmit",
+      "from": "needs_revision",
+      "to": "submitted",
+      "label": "unggah revisi",
+      "variant": "emphasis",
+      "fromSide": "left",
+      "toSide": "bottom"
+    },
+    {
+      "id": "trans-decision-exempted",
+      "from": "decision",
+      "to": "exempted",
+      "label": "bebas praktikum",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight",
+      "labelDy": 24
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Siklus Utama Dokumen",
+      "items": [
+        "Transisi berkas dari draf awal hingga berstatus sah (verified) dengan jejak audit lengkap"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Penanganan Temuan NCR",
+      "items": [
+        "Temuan audit NCR mengunci status berkas untuk perbaikan dosen sebelum verifikasi ulang"
+      ]
+    }
+  ]
+}
